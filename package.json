@@ -1,0 +1,30 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Suleman Rai Personal Projects Portfolio",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^4.4.1",
+    "countrynames": "^0.1.1",
+    "handlebars-intl": "^1.1.2",
+    "i18n-iso-countries": "^4.3.1",
+    "jquery": "^3.4.1",
+    "readmore-js": "^2.2.1",
+    "require": "^2.4.20",
+    "shufflejs": "^5.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sulemanrai/portfolio.git"
+  },
+  "author": "Suleman Rai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sulemanrai/portfolio/issues"
+  },
+  "homepage": "https://github.com/sulemanrai/portfolio#readme"
+}

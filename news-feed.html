@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Suleman Rai | Full Stack Web Developer</title>
+</head>
+<body>
+
+<!--  Custom CSS  -->
+<link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+
+
+<link href="css/flags.css" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+<link href="css/custom.css" rel="stylesheet">
+<link href="css/news-feed.css" rel="stylesheet">
+<!--  End Custom CSS  -->
+
+
+
+
+
+
+<body>
+<div class="container">
+    <section class="project-description">
+        <p>This application uses <a class="info" href="https://newsapi.org/" target="_blank">news-feed api</a> to display news articles from around the world. Templating is done using <a class="info" href="https://handlebarsjs.com/" target="_blank">handlebar.js</a> while <a class="info" href="https://getbootstrap.com/" target="_blank">Bootstrap 4 framework</a> is used for layout.</p>
+    </section>
+    <section class="demo-area">
+    <div id="template-to-render"></div>
+    </section>
+
+    <div id="demo-country-picker"  data-input-name="country"  data-selected-country="US"  data-button-size="btn-lg"  data-button-type="btn-default"  data-scrollable="true" data-scrollable-height="250px">
+    </div>
+
+    <button type="button" class="btn btn-primary load-news">Show News Feed</button>
+</div>
+
+
+
+</body>
+
+
+
+
+
+
+
+
+<script id="handlebars-demo" type="text/x-handlebars-template">
+    {{#_if this.length '==' 0}}
+        <h1 class="no-news-articles">No News Articles Found</h1>
+    {{else}}
+
+    {{#each this}}
+        {{log this}}
+    {{#if @first}}
+            <div class="row">
+                {{else}}
+                {{#_if (math @index '%' 3) '==' 0 }}
+                    </div>
+                    <div class="row">
+
+                {{/_if}}
+    {{/if}}
+        <div class="col-md-4">
+            <div class="mix story-item card us" data-selected-country="us">
+            <a class="story-container" href="{{this.url}}" target="_blank">
+                {{#if this.urlToImage}}
+                    <div class="image-container" style="background-image: url({{this.urlToImage}})"></div>
+                {{else}}
+                    <div class="image-container noimage"></div>
+                {{/if}}
+                <h6 class="title more">{{this.title}}</h6>
+
+            </a>
+                {{#if this.description}} <h6 class="more"><b>Description:</b> <span class="description">{{this.description}}</span></h6> {{/if}}
+                <h6><b>Publication Date:</b> <span> {{formatDate this.publishedAt day="numeric" month="long" year="numeric"}} </span></h6>
+
+            </div>
+        </div>
+
+    {{/each}}
+                        {{/_if}}
+    </div>
+
+
+</script>
+
+
+<!-- jquery  -->
+<script src="node_modules/jquery/dist/jquery.js"></script>
+
+<!-- bootstrap  -->
+<script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+<!-- typewriter -->
+<script src="js/typewriter.js"></script>
+
+<!-- particle.js -->
+<script src="js/particles.js"></script>
+
+<!-- typed.js -->
+<script src="js/typed.min.js"></script>
+
+
+
+<!-- handlebars.js -->
+<script src="js/handlebars.min-v4.5.3.js"></script>
+
+<!-- handlebars-intl.js -->
+<script src="node_modules/handlebars-intl/dist/handlebars-intl.min.js"></script>
+
+<!-- readmore script.js -->
+<script src="node_modules/readmore-js/readmore.min.js"></script>
+
+<!-- shuffle.js -->
+<script src="node_modules/shufflejs/dist/shuffle.js"></script>
+
+
+<!-- countrypicker.js -->
+<script src="js/jquery.flagstrap.js"></script>
+
+<script src="js/i18n-iso-countries.js"></script>
+
+
+<script src="js/pace.min.js"></script>
+
+<!-- script.js -->
+<script src="js/news-feed.js"></script>
+
+<!--<script src="js/adding-removing-v2.js"></script>-->
+
+<script>
+
+    $('#demo-country-picker').flagStrap();
+
+    async function fetchCountryCode(countryname) {
+
+        var baseurl = 'https://restcountries.eu/rest/v2/name/';
+        var country = countryname;
+        var url = baseurl.concat(country);
+
+        const response = await fetch(url, {});
+        const json = await response.json();
+        console.log("json is ", json);
+        return json[0].alpha2Code;;
+
+}
+
+function init_readmore() {
+    $('.more').readmore({
+        collapsedHeight: 50,
+        afterToggle: function(trigger, element, expanded) {
+            if(! expanded) { // The "Close" link was clicked
+                $('html, body').animate({scrollTop: element.offset().top}, {duration: 100});
+            }
+        },
+        heightMargin: 20,
+        speed: 500,
+        moreLink: '<a class="read-more" href="#">Read more</a>',
+        lessLink: '<a class="read-more" href="#">Close</a>'
+    });
+
+}
+
+
+
+function custom_init() {
+    $( document ).ready(function() {
+        init_readmore();
+    });
+}
+
+    $('.load-news').on( "click", function() {
+        //console.log("selected country is", $('#demo-country-picker button').text());
+        var _country = $('#demo-country-picker button').text();
+
+        //console.log("_country is ", _country);
+
+        var _baseurl = 'https://newsapi.org/v2/top-headlines?country=';
+        var _apiKey = 'ce5f1f9730a8416baae53b894b531a3a';
+
+        var _code = '';
+        fetchCountryCode(_country).then(code => {
+            Pace.start();
+            _code = code;
+            var url = _baseurl.concat(code,'&apiKey=',_apiKey);
+            return url;
+        }).then(url =>   {
+            //console.log("my url is ", url);
+            fetch(url)
+                .then(response => {
+                    return response.json()
+                })
+                .then(data => {
+                    // Work with JSON data here
+                    var context = data.articles;
+                    var html = templateScript(context);
+
+                    $('#template-to-render').empty();
+                    // Insert the HTML code into the page
+                    $('#template-to-render').append(html);
+                    var test = $('#template-to-render [data-selected-country]');
+                    $(test).each(function () {
+                       var $this = this;
+                        $($this).removeClass(($this).getAttribute('data-selected-country'));
+                        $($this).attr('data-selected-country',_code.toLowerCase());
+                        $($this).addClass(($this).getAttribute('data-selected-country'));
+                    });
+
+                    //init_readmore();
+                    custom_init();
+                    Pace.stop();
+                })
+                .catch(err => {
+                    // Do something for an error here
+                })
+        });
+
+    });
+
+
+</script>
+
+</body>
+</html>
